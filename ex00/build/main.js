@@ -5,15 +5,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // Check if user content should be shown
     var mainContent = document.getElementById('main-content');
     if (mainContent && accessToken) {
-        showUserContent();
+        showUserContent(accessToken);
     }
 });
-export function searchPhotos(query) {
+export function searchPhotos(query, accessToken) {
+    console.log('Access token in searchPhotos:', accessToken);
     if (!accessToken) {
         console.error('No access token available for search');
         return;
     }
-    fetch("https://api.unsplash.com/search/photos?query=".concat(query), {
+    fetch("https://api.unsplash.com/search/photos?query=".concat(query, "&per_page=18"), {
         headers: {
             Authorization: "Bearer ".concat(accessToken)
         }

@@ -36,8 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import { searchPhotos } from './main.js';
 //Definitions of API needed fields
-var clientId = 'lqoh-bgRkh73bMRYrvXsqiJD54shb6LXAVYPQ6qZOJw';
-var clientSecretKey = 'HxnFSULnr_yvdyGadKI3y6Vg79KRbDZRKab23DMxEdY';
+var clientId = 'd6jbnVVBNRl3x6-WIJRuIvkupM9l8Dk6ibB7qR-1Of0';
+var clientSecretKey = '5adVc_LD9zFJShDtZbSpUApZGAIRIKTYzPljFmA0P3A';
 var responseType = 'code';
 var scope = 'public';
 //Redirect URI and AuthURL
@@ -51,7 +51,6 @@ window.addEventListener('load', function () {
     if (code) {
         console.log('Authorization code found:', code);
         exchangeCodeForToken(code);
-        window.location.href = authUrl;
     }
     else {
         console.log('No authorization code found');
@@ -100,7 +99,7 @@ function exchangeCodeForToken(code) {
                     console.log('Access token:', accessToken);
                     localStorage.setItem('access_token', accessToken);
                     window.history.replaceState({}, document.title, redirectUri);
-                    showUserContent();
+                    showUserContent(accessToken);
                     return [3 /*break*/, 5];
                 case 4:
                     error_1 = _a.sent();
@@ -123,7 +122,7 @@ export function showLoginButton() {
         }
     }
 }
-export function showUserContent() {
+export function showUserContent(accessToken) {
     var mainContent = document.getElementById('main-content');
     if (mainContent) {
         mainContent.innerHTML = "\n\t\t\t<section id=\"search-section\">\n\t\t\t\t<input type=\"text\" id=\"search-input\" placeholder=\"Search photos...\">\n\t\t\t\t<button id=\"search-btn\">Search</button>\n\t\t\t</section>\n\t\t\t<section id=\"gallery-section\">\n\t\t\t\t<div id=\"gallery\"></div>\n\t\t\t</section>\n\t\t\t<section id=\"favorites-section\">\n\t\t\t\t<h2>Favorites</h2>\n\t\t\t\t<div id=\"favorites\"></div>\n\t\t\t</section>\n\t\t";
@@ -131,7 +130,7 @@ export function showUserContent() {
         if (searchBtn) {
             searchBtn.addEventListener('click', function () {
                 var query = document.getElementById('search-input').value;
-                searchPhotos(query);
+                searchPhotos(query, accessToken);
             });
         }
     }

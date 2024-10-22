@@ -4,22 +4,22 @@ import { getAccessToken, showUserContent} from './auth.js';
 let accessToken: string | null = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    accessToken = getAccessToken();
+	accessToken = getAccessToken();
 
-    // Check if user content should be shown
-    const mainContent = document.getElementById('main-content');
-    if (mainContent && accessToken) {
-        showUserContent();
-    }
+	// Check if user content should be shown
+	const mainContent = document.getElementById('main-content');
+	if (mainContent && accessToken) {
+		showUserContent(accessToken);
+	}
 });
 
-export function searchPhotos(query: string): void {
+export function searchPhotos(query: string, accessToken: string): void {
+	console.log('Access token in searchPhotos:', accessToken);
 	if (!accessToken) {
 		console.error('No access token available for search');
 		return;
 	}
-
-	fetch(`https://api.unsplash.com/search/photos?query=${query}`, {
+	fetch(`https://api.unsplash.com/search/photos?query=${query}&per_page=18`, {
 		headers: {
 			Authorization: `Bearer ${accessToken}`
 		}

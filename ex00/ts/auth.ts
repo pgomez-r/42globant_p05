@@ -1,8 +1,8 @@
 import { searchPhotos } from './main.js';
 
 //Definitions of API needed fields
-const clientId = 'lqoh-bgRkh73bMRYrvXsqiJD54shb6LXAVYPQ6qZOJw';
-const clientSecretKey = 'HxnFSULnr_yvdyGadKI3y6Vg79KRbDZRKab23DMxEdY';
+const clientId = 'd6jbnVVBNRl3x6-WIJRuIvkupM9l8Dk6ibB7qR-1Of0';
+const clientSecretKey = '5adVc_LD9zFJShDtZbSpUApZGAIRIKTYzPljFmA0P3A';
 const responseType = 'code';
 const scope = 'public';
 //Redirect URI and AuthURL
@@ -56,7 +56,7 @@ async function exchangeCodeForToken(code: string) {
 		console.log('Access token:', accessToken);
 		localStorage.setItem('access_token', accessToken);
 		window.history.replaceState({}, document.title, redirectUri);
-		showUserContent();
+		showUserContent(accessToken);
 	} catch (error) {
 		console.error('Error exchanging code for token:', error);
 	}
@@ -77,7 +77,7 @@ export function showLoginButton() {
 	}
 }
 
-export function showUserContent() {
+export function showUserContent(accessToken: string) {
 	const mainContent = document.getElementById('main-content');
 	if (mainContent) {
 		mainContent.innerHTML = `
@@ -97,7 +97,7 @@ export function showUserContent() {
 		if (searchBtn) {
 			searchBtn.addEventListener('click', () => {
 				const query: string = (document.getElementById('search-input') as HTMLInputElement).value;
-				searchPhotos(query);
+				searchPhotos(query, accessToken);
 			});
 		}
 	}
