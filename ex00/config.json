@@ -1,4 +1,8 @@
 {
 	"clientId": "d6jbnVVBNRl3x6-WIJRuIvkupM9l8Dk6ibB7qR-1Of0",
-	"clientSecretKey": "5adVc_LD9zFJShDtZbSpUApZGAIRIKTYzPljFmA0P3A"
+	"clientSecretKey": "5adVc_LD9zFJShDtZbSpUApZGAIRIKTYzPljFmA0P3A",
+	"responseType": "code",
+	"scope": "public",
+	"redirectUri": "/ex00/index.html",
+	"tokenEndpoint": "https://unsplash.com/oauth/token"
 }

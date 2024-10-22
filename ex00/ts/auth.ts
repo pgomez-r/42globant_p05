@@ -1,29 +1,62 @@
+
 import { searchPhotos } from './main.js';
 
-//Need to find a way to parse the credentials from outside the code without fucking everything else up T_T
-//Definitions of API needed fields
-const clientId = 'd6jbnVVBNRl3x6-WIJRuIvkupM9l8Dk6ibB7qR-1Of0';
-const clientSecretKey = '5adVc_LD9zFJShDtZbSpUApZGAIRIKTYzPljFmA0P3A';
-const responseType = 'code';
-const scope = 'public';
-//Redirect URI and AuthURL
-const redirectUri = `${window.location.origin}/ex00/index.html`;
-const authUrl = `https://unsplash.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${scope}&prompt=consent`;
-const tokenEndpoint = 'https://unsplash.com/oauth/token';
+let clientId: string;
+let clientSecretKey: string;
+let responseType: string;
+let scope: string;
+let redirectUri: string;
+let tokenEndpoint: string;
+let authUrl: string;
 
-console.log('RedirectUri composed:', redirectUri);
-
-window.addEventListener('load', () => {
-	console.log('Page loaded');
-	const code = getAuthorizationCode();
-	if (code) { 
-		console.log('Authorization code found:', code);
-		exchangeCodeForToken(code);
-	} else {
-		console.log('No authorization code found');
-		showLoginButton();
-	}
+// A promise to track configuration loading
+const configLoaded: Promise<void> = new Promise((resolve, reject) => {
+	// Fetch the configuration JSON file
+	fetch('./config.json')
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Failed to load configuration');
+			}
+			return response.json();
+		})
+		.then(config => {
+			// Set the variables with explicit typing
+			clientId = config.clientId as string;
+			clientSecretKey = config.clientSecretKey as string;
+			responseType = config.responseType as string;
+			scope = config.scope as string;
+			redirectUri = `${window.location.origin}${config.redirectUri as string}`;
+			tokenEndpoint = config.tokenEndpoint as string;
+			authUrl = `https://unsplash.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${scope}&prompt=consent`;
+			console.log('Configuration loaded successfully:', config);
+			console.log('RedirectUri composed:', redirectUri);
+			// Resolve the promise to indicate that configuration is loaded
+			resolve();
+		})
+		.catch(error => {
+			console.error('Error loading configuration:', error);
+			reject(error);
+		});
 });
+
+function initializeApp() {
+	window.addEventListener('load', () => {
+		console.log('Page loaded');
+		const code = getAuthorizationCode();
+		if (code) { 
+			console.log('Authorization code found:', code);
+			// Ensure configuration is loaded before exchanging the code
+			configLoaded.then(() => exchangeCodeForToken(code)).catch(error => {
+				console.error('Failed to exchange code for token:', error);
+			});
+		} else {
+			console.log('No authorization code found');
+			showLoginButton();
+		}
+	});
+}
+
+initializeApp();
 
 function getAuthorizationCode(): string | null {
 	const urlParams = new URLSearchParams(window.location.search);

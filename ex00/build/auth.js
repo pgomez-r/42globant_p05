@@ -35,28 +35,60 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { searchPhotos } from './main.js';
-//Definitions of API needed fields
-var clientId = 'd6jbnVVBNRl3x6-WIJRuIvkupM9l8Dk6ibB7qR-1Of0';
-var clientSecretKey = '5adVc_LD9zFJShDtZbSpUApZGAIRIKTYzPljFmA0P3A';
-var responseType = 'code';
-var scope = 'public';
-//Redirect URI and AuthURL
-var redirectUri = "".concat(window.location.origin, "/ex00/index.html");
-var authUrl = "https://unsplash.com/oauth/authorize?client_id=".concat(clientId, "&redirect_uri=").concat(encodeURIComponent(redirectUri), "&response_type=").concat(responseType, "&scope=").concat(scope, "&prompt=consent");
-var tokenEndpoint = 'https://unsplash.com/oauth/token';
-console.log('RedirectUri composed:', redirectUri);
-window.addEventListener('load', function () {
-    console.log('Page loaded');
-    var code = getAuthorizationCode();
-    if (code) {
-        console.log('Authorization code found:', code);
-        exchangeCodeForToken(code);
-    }
-    else {
-        console.log('No authorization code found');
-        showLoginButton();
-    }
+var clientId;
+var clientSecretKey;
+var responseType;
+var scope;
+var redirectUri;
+var tokenEndpoint;
+var authUrl;
+// A promise to track configuration loading
+var configLoaded = new Promise(function (resolve, reject) {
+    // Fetch the configuration JSON file
+    fetch('./config.json')
+        .then(function (response) {
+        if (!response.ok) {
+            throw new Error('Failed to load configuration');
+        }
+        return response.json();
+    })
+        .then(function (config) {
+        // Set the variables with explicit typing
+        clientId = config.clientId;
+        clientSecretKey = config.clientSecretKey;
+        responseType = config.responseType;
+        scope = config.scope;
+        redirectUri = "".concat(window.location.origin).concat(config.redirectUri);
+        tokenEndpoint = config.tokenEndpoint;
+        authUrl = "https://unsplash.com/oauth/authorize?client_id=".concat(clientId, "&redirect_uri=").concat(encodeURIComponent(redirectUri), "&response_type=").concat(responseType, "&scope=").concat(scope, "&prompt=consent");
+        console.log('Configuration loaded successfully:', config);
+        console.log('RedirectUri composed:', redirectUri);
+        // Resolve the promise to indicate that configuration is loaded
+        resolve();
+    })
+        .catch(function (error) {
+        console.error('Error loading configuration:', error);
+        reject(error);
+    });
 });
+function initializeApp() {
+    window.addEventListener('load', function () {
+        console.log('Page loaded');
+        var code = getAuthorizationCode();
+        if (code) {
+            console.log('Authorization code found:', code);
+            // Ensure configuration is loaded before exchanging the code
+            configLoaded.then(function () { return exchangeCodeForToken(code); }).catch(function (error) {
+                console.error('Failed to exchange code for token:', error);
+            });
+        }
+        else {
+            console.log('No authorization code found');
+            showLoginButton();
+        }
+    });
+}
+initializeApp();
 function getAuthorizationCode() {
     var urlParams = new URLSearchParams(window.location.search);
     var code = urlParams.get('code');
