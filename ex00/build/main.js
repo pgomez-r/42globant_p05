@@ -1,5 +1,6 @@
 import { getAccessToken, showUserContent } from './auth.js';
 var accessToken = null;
+var favorites = [];
 document.addEventListener('DOMContentLoaded', function () {
     accessToken = getAccessToken();
     // Check if user content should be shown
@@ -30,13 +31,30 @@ export function searchPhotos(query, accessToken) {
 function displayPhotos(photos) {
     var gallery = document.getElementById('gallery');
     if (gallery) {
-        gallery.innerHTML = '';
-        photos.forEach(function (photo) {
-            var photoDiv = document.createElement('div');
-            photoDiv.classList.add('photo');
-            photoDiv.style.backgroundImage = "url(".concat(photo.urls.small, ")");
-            gallery.appendChild(photoDiv);
+        gallery.innerHTML = photos.map(function (photo) { return "\n\t\t\t<div class=\"photo\">\n\t\t\t\t<img src=\"".concat(photo.urls.small, "\" alt=\"").concat(photo.alt_description, "\">\n\t\t\t\t<button class=\"favorite-btn\" data-photo-id=\"").concat(photo.id, "\">Favorite</button>\n\t\t\t</div>\n\t\t"); }).join('');
+        // Add event listeners to favorite buttons
+        var favoriteButtons = document.querySelectorAll('.favorite-btn');
+        favoriteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                var photoId = event.target.getAttribute('data-photo-id');
+                var photo = photos.find(function (p) { return p.id === photoId; });
+                if (photo) {
+                    addFavorite(photo);
+                }
+            });
         });
+    }
+}
+function addFavorite(photo) {
+    if (!favorites.some(function (fav) { return fav.id === photo.id; })) {
+        favorites.push(photo);
+        displayFavorites();
+    }
+}
+function displayFavorites() {
+    var favoritesSection = document.getElementById('favorites');
+    if (favoritesSection) {
+        favoritesSection.innerHTML = favorites.map(function (photo) { return "\n\t\t\t<div class=\"photo\">\n\t\t\t\t<img src=\"".concat(photo.urls.small, "\" alt=\"").concat(photo.alt_description, "\">\n\t\t\t</div>\n\t\t"); }).join('');
     }
 }
 //# sourceMappingURL=main.js.map

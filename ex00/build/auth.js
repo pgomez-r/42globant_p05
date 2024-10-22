@@ -73,6 +73,9 @@ function exchangeCodeForToken(code) {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 4, , 5]);
+                    if (!clientId || !clientSecretKey) {
+                        throw new Error('Client ID or Client Secret is not defined');
+                    }
                     return [4 /*yield*/, fetch(tokenEndpoint, {
                             method: 'POST',
                             headers: {

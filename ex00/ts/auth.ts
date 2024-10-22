@@ -34,6 +34,9 @@ function getAuthorizationCode(): string | null {
 async function exchangeCodeForToken(code: string) {
 	console.log('Exchanging code for token:', code);
 	try {
+		if (!clientId || !clientSecretKey) {
+			throw new Error('Client ID or Client Secret is not defined');
+		}
 		const response = await fetch(tokenEndpoint, {
 			method: 'POST',
 			headers: {

@@ -1,7 +1,8 @@
 
 import { getAccessToken, showUserContent} from './auth.js';
 
-let accessToken: string | null = null;
+let	accessToken:string | null = null;
+let	favorites: any[] = [];
 
 document.addEventListener('DOMContentLoaded', () => {
 	accessToken = getAccessToken();
@@ -36,12 +37,41 @@ export function searchPhotos(query: string, accessToken: string): void {
 function displayPhotos(photos: any[]): void {
 	const gallery: HTMLElement | null = document.getElementById('gallery');
 	if (gallery) {
-		gallery.innerHTML = '';
-		photos.forEach(photo => {
-			const photoDiv: HTMLDivElement = document.createElement('div');
-			photoDiv.classList.add('photo');
-			photoDiv.style.backgroundImage = `url(${photo.urls.small})`;
-			gallery.appendChild(photoDiv);
+		gallery.innerHTML = photos.map(photo => `
+			<div class="photo">
+				<img src="${photo.urls.small}" alt="${photo.alt_description}">
+				<button class="favorite-btn" data-photo-id="${photo.id}">Favorite</button>
+			</div>
+		`).join('');
+
+		// Add event listeners to favorite buttons
+		const favoriteButtons = document.querySelectorAll('.favorite-btn');
+		favoriteButtons.forEach(button => {
+			button.addEventListener('click', (event) => {
+				const photoId = (event.target as HTMLElement).getAttribute('data-photo-id');
+				const photo = photos.find(p => p.id === photoId);
+				if (photo) {
+					addFavorite(photo);
+				}
+			});
 		});
+	}
+}
+
+function addFavorite(photo: any): void {
+	if (!favorites.some(fav => fav.id === photo.id)) {
+		favorites.push(photo);
+		displayFavorites();
+	}
+}
+
+function displayFavorites(): void {
+	const favoritesSection: HTMLElement | null = document.getElementById('favorites');
+	if (favoritesSection) {
+		favoritesSection.innerHTML = favorites.map(photo => `
+			<div class="photo">
+				<img src="${photo.urls.small}" alt="${photo.alt_description}">
+			</div>
+		`).join('');
 	}
 }
