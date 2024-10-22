@@ -1,5 +1,6 @@
 import { searchPhotos } from './main.js';
 
+//Need to find a way to parse the credentials from outside the code without fucking everything else up T_T
 //Definitions of API needed fields
 const clientId = 'd6jbnVVBNRl3x6-WIJRuIvkupM9l8Dk6ibB7qR-1Of0';
 const clientSecretKey = '5adVc_LD9zFJShDtZbSpUApZGAIRIKTYzPljFmA0P3A';
