@@ -41,15 +41,17 @@ var clientSecretKey = 'HxnFSULnr_yvdyGadKI3y6Vg79KRbDZRKab23DMxEdY';
 var responseType = 'code';
 var scope = 'public';
 //Redirect URI and AuthURL
-var redirectUri = "".concat(window.location.origin, "/project_05/ex00/index.html");
-var authUrl = "https://unsplash.com/oauth/authorize?client_id=".concat(clientId, "&redirect_uri=").concat(encodeURIComponent(redirectUri), "&response_type=").concat(responseType, "&scope=").concat(scope);
+var redirectUri = "".concat(window.location.origin, "/ex00/index.html");
+var authUrl = "https://unsplash.com/oauth/authorize?client_id=".concat(clientId, "&redirect_uri=").concat(encodeURIComponent(redirectUri), "&response_type=").concat(responseType, "&scope=").concat(scope, "&prompt=consent");
 var tokenEndpoint = 'https://unsplash.com/oauth/token';
+console.log('RedirectUri composed:', redirectUri);
 window.addEventListener('load', function () {
     console.log('Page loaded');
     var code = getAuthorizationCode();
     if (code) {
         console.log('Authorization code found:', code);
         exchangeCodeForToken(code);
+        window.location.href = authUrl;
     }
     else {
         console.log('No authorization code found');
@@ -135,6 +137,8 @@ export function showUserContent() {
     }
 }
 export function getAccessToken() {
-    return localStorage.getItem('access_token');
+    var urlParams = new URLSearchParams(window.location.search);
+    var token = urlParams.get('access_token');
+    return token;
 }
 //# sourceMappingURL=auth.js.map

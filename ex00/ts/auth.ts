@@ -6,14 +6,16 @@ const clientSecretKey = 'HxnFSULnr_yvdyGadKI3y6Vg79KRbDZRKab23DMxEdY';
 const responseType = 'code';
 const scope = 'public';
 //Redirect URI and AuthURL
-const redirectUri = `${window.location.origin}/project_05/ex00/index.html`;
-const authUrl = `https://unsplash.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${scope}`;
+const redirectUri = `${window.location.origin}/ex00/index.html`;
+const authUrl = `https://unsplash.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${scope}&prompt=consent`;
 const tokenEndpoint = 'https://unsplash.com/oauth/token';
+
+console.log('RedirectUri composed:', redirectUri);
 
 window.addEventListener('load', () => {
 	console.log('Page loaded');
 	const code = getAuthorizationCode();
-	if (code) {
+	if (code) { 
 		console.log('Authorization code found:', code);
 		exchangeCodeForToken(code);
 	} else {
@@ -92,15 +94,17 @@ export function showUserContent() {
 			</section>
 		`;
 		const searchBtn = document.getElementById('search-btn');
-        if (searchBtn) {
-            searchBtn.addEventListener('click', () => {
-                const query: string = (document.getElementById('search-input') as HTMLInputElement).value;
-                searchPhotos(query);
-            });
-        }
+		if (searchBtn) {
+			searchBtn.addEventListener('click', () => {
+				const query: string = (document.getElementById('search-input') as HTMLInputElement).value;
+				searchPhotos(query);
+			});
+		}
 	}
 }
 
 export function getAccessToken(): string | null {
-	return localStorage.getItem('access_token');
+	const urlParams = new URLSearchParams(window.location.search);
+	const token = urlParams.get('access_token');
+	return token;
 }
