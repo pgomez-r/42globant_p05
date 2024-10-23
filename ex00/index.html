@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -9,12 +8,18 @@
 </head>
 <body>
 	<header>
-		<h1>42 Unplash Photo Gallery</h1>
+		<h1>42-Unplash Image Searcher</h1>
+		<form action="" id="search-form">
+            <input type="text" id="search-box" placeholder="Insert your search">
+            <button>Search</button>
+        </form>
 	</header>
-	<main id="main-content">
-		<!-- Content will be dynamically updated here -->
-	</main>
-	<script type="module" src="build/auth.js"></script>
-	<script type="module" src="build/main.js"></script>
+
+    <div id="search-results">
+       
+    </div>
+    <button id="show-more">Mostrar más</button>
+
+	<script src="build/main.js"></script>
 </body>
 </html>
