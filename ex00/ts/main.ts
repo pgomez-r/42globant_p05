@@ -17,8 +17,14 @@ const	showMore = document.querySelector("#show-more");
 
 let		keyword = ""; //will save the search input
 let		page = 1;
-const	accessKey = "lqoh-bgRkh73bMRYrvXsqiJD54shb6LXAVYPQ6qZOJw"; 
-//TODO: accessKey needs to be parsed from outside the code (server-config.json)
+let		accessKey = "";
+fetch('server-config.json')
+	.then(response => response.json())
+	.then(config => {
+		accessKey = config.clientId; // Assuming clientId is the accessKey
+		console.log("Access Key loaded:", accessKey);
+	})
+	.catch(error => console.error('Error loading config:', error));
 
 async function	searchImages()
 {
@@ -37,7 +43,6 @@ async function	searchImages()
 	if(page===1 && searchResults){
 		searchResults.innerHTML = "";
 	}
-
 	const	results: UnsplashResult[] = data.results;
 	//For each reasult, create HTML elements inside search-result div
 	//Element img, element link ('a'), element fav-button

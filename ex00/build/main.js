@@ -42,8 +42,14 @@ var searchResults = document.querySelector("#search-results");
 var showMore = document.querySelector("#show-more");
 var keyword = ""; //will save the search input
 var page = 1;
-var accessKey = "lqoh-bgRkh73bMRYrvXsqiJD54shb6LXAVYPQ6qZOJw";
-//TODO: accessKey needs to be parsed from outside the code (server-config.json)
+var accessKey = "";
+fetch('server-config.json')
+    .then(function (response) { return response.json(); })
+    .then(function (config) {
+    accessKey = config.clientId; // Assuming clientId is the accessKey
+    console.log("Access Key loaded:", accessKey);
+})
+    .catch(function (error) { return console.error('Error loading config:', error); });
 function searchImages() {
     return __awaiter(this, void 0, void 0, function () {
         var inputElement, url, response, data, results, inputElement;
