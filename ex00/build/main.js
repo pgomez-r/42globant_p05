@@ -35,22 +35,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-//Tomamos todos los elementos del html
+//Saving the HTML elements into JS variables
 var searchForm = document.querySelector("#search-form");
 var searchBox = document.querySelector("#search-box");
 var searchResults = document.querySelector("#search-results");
 var showMore = document.querySelector("#show-more");
-var keyword = ""; //variable que guarda la palabra a buscar
-var page = 1; //número de pagina de busqueda
+var keyword = ""; //will save the search input
+var page = 1;
 var accessKey = "lqoh-bgRkh73bMRYrvXsqiJD54shb6LXAVYPQ6qZOJw";
-//Función que trae los resultados
-function buscarImagenes() {
+//TODO: accessKey needs to be parsed from outside the code (server-config.json)
+function searchImages() {
     return __awaiter(this, void 0, void 0, function () {
-        var inputElement, url, response, data, resultados, inputElement;
+        var inputElement, url, response, data, results, inputElement;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    //tomo el valor que ingresó el usuario
                     if (searchBox) {
                         inputElement = searchBox;
                         keyword = inputElement.value;
@@ -62,26 +61,32 @@ function buscarImagenes() {
                     return [4 /*yield*/, response.json()];
                 case 2:
                     data = _a.sent();
-                    //console.log(data);
-                    //controlo, si es la primera vez que busco limpio el contendor
-                    //donde se muestran los resultados
+                    console.log(JSON.stringify(data));
+                    //If first time search, clean the container
                     if (page === 1 && searchResults) {
                         searchResults.innerHTML = "";
                     }
-                    resultados = data.results;
-                    //Por cada resultado armo un enlace a, con la imagen dentro
-                    resultados.map(function (result) {
-                        var imagen = document.createElement("img");
-                        imagen.src = result.urls.small;
-                        var imagenLink = document.createElement("a");
-                        imagenLink.href = result.links.html;
-                        imagenLink.target = "_blank";
-                        imagenLink.appendChild(imagen);
-                        //agrego el elemento al contendor
+                    results = data.results;
+                    //For each reasult, create HTML elements inside search-result div
+                    //Element img, element link ('a'), element fav-button
+                    results.map(function (result) {
+                        var imageContainer = document.createElement("div");
+                        imageContainer.classList.add("image-container");
+                        var image = document.createElement("img");
+                        image.src = result.urls.small;
+                        var imageLink = document.createElement("a");
+                        imageLink.href = result.links.html;
+                        imageLink.target = "_blank";
+                        imageLink.appendChild(image); //Append the image to the link
+                        var favButton = document.createElement("button");
+                        favButton.textContent = "Favorite";
+                        favButton.classList.add("fav-button");
+                        imageContainer.appendChild(imageLink); //Append the link (with image) to the container
+                        imageContainer.appendChild(favButton); //Append the favorite button to the container
+                        //add element to the container
                         if (searchResults)
-                            searchResults.appendChild(imagenLink);
+                            searchResults.appendChild(imageContainer);
                     });
-                    //muestro el botón mostrar mas
                     if (showMore) {
                         inputElement = showMore;
                         inputElement.style.display = "block";
@@ -91,20 +96,20 @@ function buscarImagenes() {
         });
     });
 }
-//Agrego funcionalidad para cuando
+//SearchForm listener (click/enter = submit)
 if (searchForm) {
     searchForm.addEventListener("submit", function (e) {
-        //Evito que se regarge la pàgina
+        //Avoid page to reload by itself (I don't fully understand this T_T)
         e.preventDefault();
         page = 1;
-        buscarImagenes();
+        searchImages();
     });
 }
-//Funcionalidad al boton Mostrar mas.
+//Showmore button listener
 if (showMore) {
     showMore.addEventListener("click", function () {
         page++;
-        buscarImagenes();
+        searchImages();
     });
 }
 //# sourceMappingURL=main.js.map
